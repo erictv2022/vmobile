@@ -1,10 +1,7 @@
 package co.cueric.fishes.views
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +9,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,8 +35,11 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
 
     LazyColumn(state = rememberLazyListState(), verticalArrangement = Arrangement.Center) {
         item {
-            Row(horizontalArrangement = Arrangement.Center) {
-                Column() {
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     OutlinedTextField(
                         value = email,
                         onValueChange = { viewModel.setEmail(it) },
@@ -53,7 +54,10 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                     )
 
-                    Row() {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         when (mode) {
                             Mode.LOGIN -> {
                                 Button(
@@ -91,6 +95,7 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
                                     text = "have account? Go to login",
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
+                                        .padding(top = 16.dp)
                                         .clickable {
                                             viewModel.changeMode(Mode.LOGIN)
                                         })
