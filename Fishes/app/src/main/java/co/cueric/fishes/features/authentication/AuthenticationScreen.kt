@@ -5,13 +5,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import co.cueric.fishes.core.ui.LoadingDialog
 import co.cueric.fishes.features.authentication.AuthenticationViewModel
@@ -27,6 +32,7 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
     val mode by viewModel.mode.collectAsState()
+    var showPassword by rememberSaveable { mutableStateOf(false) }
     val isLoading by viewModel.isLoading.collectAsState()
     var dialogState  = remember { mutableStateOf(false) }
     if (isLoading){
@@ -51,7 +57,19 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
                         value = password,
                         onValueChange = { viewModel.setPassword(it) },
                         label = { Text("Password") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            val image = if (showPassword)
+                                Icons.Filled.Visibility
+                            else Icons.Filled.VisibilityOff
+                            val description =
+                                if (showPassword) "Hide password" else "Show password"
+
+                            IconButton(onClick = { showPassword = !showPassword }) {
+                                Icon(imageVector = image, description)
+                            }
+                        }
                     )
 
                     Column(
@@ -75,6 +93,7 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
                                     text = "Register account",
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
+                                        .padding(top = 16.dp)
                                         .clickable {
                                             viewModel.changeMode(Mode.REGISTER)
                                         })
@@ -92,7 +111,7 @@ fun RegistrationForm(viewModel: AuthenticationViewModel) {
                                 }
 
                                 Text(
-                                    text = "have account? Go to login",
+                                    text = "Have account? Go to login",
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
                                         .padding(top = 16.dp)
