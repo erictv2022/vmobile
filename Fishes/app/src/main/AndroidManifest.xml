@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fishes">
         <activity
+            android:name=".features.authentication.user.UserProfileActivity"
+            android:exported="false"
+            android:label="@string/title_activity_user_profile"
+            android:theme="@style/Theme.Fishes" />
+        <activity
             android:name=".features.authentication.home.HomeActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
