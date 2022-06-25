@@ -3,4 +3,5 @@
     <string name="title_activity_authentication">AuthenticationActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_bottom_nav">BottomNavActivity</string>
 </resources>
