@@ -23,17 +23,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.cueric.fishes.core.navigation.TabNavigationItem
+import co.cueric.fishes.core.startRegister
+import co.cueric.fishes.core.ui.theme.FishesTheme
 import co.cueric.fishes.features.authentication.add.AddScreen
 import co.cueric.fishes.features.authentication.cart.CartScreen
-import co.cueric.fishes.core.ui.theme.FishesTheme
 import co.cueric.fishes.features.authentication.notification.NotificationScreen
 import co.cueric.fishes.features.authentication.profile.ProfileScreen
+import co.cueric.fishes.features.authentication.profile.UserProfileViewModel
+import co.cueric.fishes.managers.AuthManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
 
 class HomeActivity : AppCompatActivity() {
     private val viewModel by viewModels<HomeViewModel>()
+    private val userProfileViewModel by viewModels<UserProfileViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,7 +48,10 @@ class HomeActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    HomeScreen()
+                    HomeScreen(
+                        homeViewModel = viewModel,
+                        userProfileViewModel = userProfileViewModel
+                    )
                 }
             }
         }
@@ -123,7 +131,10 @@ fun Greeting2(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    homeViewModel: HomeViewModel,
+    userProfileViewModel: UserProfileViewModel
+) {
     val items = listOf(
         TabNavigationItem.Home,
         TabNavigationItem.Cart,
@@ -161,7 +172,12 @@ fun HomeScreen() {
             startDestination = TabNavigationItem.Home.screen_route,
             Modifier.padding(innerPadding)
         ) {
-            composable(TabNavigationItem.Home.screen_route) { LandingScreen(navController) }
+            composable(TabNavigationItem.Home.screen_route) {
+                LandingScreen(
+                    navController,
+                    viewModel = homeViewModel
+                )
+            }
             composable(TabNavigationItem.Cart.screen_route) { CartScreen(navController) }
             composable(TabNavigationItem.Add.screen_route) { AddScreen(navController) }
             composable(TabNavigationItem.Notification.screen_route) {
@@ -169,7 +185,12 @@ fun HomeScreen() {
                     navController
                 )
             }
-            composable(TabNavigationItem.Profile.screen_route) { ProfileScreen(navController) }
+            composable(TabNavigationItem.Profile.screen_route) {
+                ProfileScreen(
+                    navController,
+                    viewModel = userProfileViewModel
+                )
+            }
         }
     }
 }
