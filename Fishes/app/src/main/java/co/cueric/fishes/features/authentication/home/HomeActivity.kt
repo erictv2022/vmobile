@@ -25,7 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import co.cueric.fishes.core.navigation.TabNavigationItem
 import co.cueric.fishes.features.authentication.add.AddScreen
 import co.cueric.fishes.features.authentication.cart.CartScreen
-import co.cueric.fishes.features.authentication.home.ui.theme.FishesTheme
+import co.cueric.fishes.core.ui.theme.FishesTheme
 import co.cueric.fishes.features.authentication.notification.NotificationScreen
 import co.cueric.fishes.features.authentication.profile.ProfileScreen
 import kotlinx.coroutines.flow.collectLatest
