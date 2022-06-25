@@ -121,6 +121,14 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                AuthManager.didSignout.collectLatest {
+                    startRegister(this@HomeActivity)
+                }
+            }
+        }
     }
 }
 
