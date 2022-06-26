@@ -41,6 +41,12 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
     val takePhoto = _takePhoto.receiveAsFlow()
     val cameraPermissionGranted = MutableStateFlow(false)
 
+    val _getCurrentLocation = Channel<Unit>(Channel.BUFFERED)
+    val getCurrentLocation = _getCurrentLocation.receiveAsFlow()
+    val locationPermissionGranted = MutableStateFlow(false)
+    val gpsLatitude = MutableStateFlow<Double?>(null)
+    val gpsLongitude = MutableStateFlow<Double?>(null)
+
     init {
         authManager.auth.currentUser?.let { currentUser ->
             _displayName.update { currentUser.displayName.orEmpty() }
@@ -89,6 +95,10 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
 
     fun updateCameraPermission(granted: Boolean){
         cameraPermissionGranted.update { granted }
+    }
+
+    fun updateLocationPermission(granted: Boolean){
+        locationPermissionGranted.update { granted }
     }
 
     fun logout(){

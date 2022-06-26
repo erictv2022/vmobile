@@ -143,6 +143,31 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                userProfileViewModel.getCurrentLocation.collectLatest {
+                    // Request camera permissions
+                    PermissionX.init(this@HomeActivity)
+                        .permissions(
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                        .request { allGranted, grantedList, deniedList ->
+                            if (!grantedList.isNullOrEmpty()) {
+                                userProfileViewModel.updateLocationPermission(true)
+                            } else {
+                                userProfileViewModel.updateLocationPermission(false)
+                                Toast.makeText(
+                                    this@HomeActivity,
+                                    "These permissions are denied: $deniedList",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 userProfileViewModel.takePhoto.collectLatest {
                     // Request camera permissions
                     PermissionX.init(this@HomeActivity)
