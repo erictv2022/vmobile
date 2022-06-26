@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import co.cueric.fishes.core.BaseViewModel
 import co.cueric.fishes.core.STATEFLOW_STARTED
+import co.cueric.fishes.core.errors.AuthenticationError
 import co.cueric.fishes.core.errors.DataError
 import co.cueric.fishes.core.errors.ERRORCODE
 import co.cueric.fishes.managers.AuthManager
@@ -77,7 +78,8 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
             try {
                 AuthManager.signOut()
             } catch (e: Exception) {
-
+                // 400 as bad request
+                showError(AuthenticationError(errorCode = 400, message = e.localizedMessage))
             }
         }
     }
