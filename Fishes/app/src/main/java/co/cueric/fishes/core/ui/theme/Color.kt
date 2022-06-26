@@ -1,4 +1,4 @@
-package co.cueric.fishes.ui.theme
+package co.cueric.fishes.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

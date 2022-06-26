@@ -1,4 +1,4 @@
-package co.cueric.fishes.ui.theme
+package co.cueric.fishes.activities.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
