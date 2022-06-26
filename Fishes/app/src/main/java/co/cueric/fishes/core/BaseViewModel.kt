@@ -21,6 +21,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     private val _error = Channel<BaseError?>(Channel.BUFFERED)
     val error = _error.receiveAsFlow()
 
+    val showAlertDialog = MutableStateFlow(false)
+
     fun showLoading(){
         _isLoading.update { true }
     }
@@ -30,6 +32,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun showError(error: BaseError){
+        showAlertDialog.update { true }
         _error.trySend(error)
+    }
+
+    fun dismissAlertDialog(){
+        showAlertDialog.update { false }
     }
 }
