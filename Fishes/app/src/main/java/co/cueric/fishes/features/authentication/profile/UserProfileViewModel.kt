@@ -61,7 +61,7 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
                     isEditing.update { false }
                 }
                 else {
-                    showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = "update fail"))
+                    showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = "Update fail"))
                 }
             } catch (e: Exception) {
                     showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = e.localizedMessage))
