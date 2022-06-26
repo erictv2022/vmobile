@@ -1,11 +1,8 @@
 package co.cueric.fishes.features.authentication.profile
 
 import android.app.Application
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.provider.MediaStore
+import android.location.Location
 import android.util.Log
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.viewModelScope
 import co.cueric.fishes.core.BaseViewModel
 import co.cueric.fishes.core.STATEFLOW_STARTED
@@ -41,13 +38,32 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
     val takePhoto = _takePhoto.receiveAsFlow()
     val cameraPermissionGranted = MutableStateFlow(false)
 
+    val _getCurrentLocation = Channel<Unit>(Channel.BUFFERED)
+    val getCurrentLocation = _getCurrentLocation.receiveAsFlow()
+    val currentLocation = MutableStateFlow<Location?>(null)
+    val locationPermissionGranted = MutableStateFlow(false)
+    val gpsLatitude = MutableStateFlow<Double?>(null)
+    val gpsLongitude = MutableStateFlow<Double?>(null)
+    private val _addressLine1 = MutableStateFlow("")
+    val addressLine1 = _addressLine1.stateIn(
+        scope = viewModelScope,
+        started = STATEFLOW_STARTED,
+        initialValue = ""
+    )
+    private val _addressLine2 = MutableStateFlow("")
+    val addressLine2 = _addressLine2.stateIn(
+        scope = viewModelScope,
+        started = STATEFLOW_STARTED,
+        initialValue = ""
+    )
+
     init {
         authManager.auth.currentUser?.let { currentUser ->
             _displayName.update { currentUser.displayName.orEmpty() }
         }
     }
 
-    fun startEditProfile(){
+    fun startEditProfile() {
         isEditing.update { true }
     }
 
@@ -76,8 +92,7 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
                 }
             } catch (e: Exception) {
                     showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = e.localizedMessage))
-            }
-            finally {
+            } finally {
                 dismissLoading()
             }
         }
@@ -87,11 +102,23 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
         _takePhoto.trySend(Unit)
     }
 
-    fun updateCameraPermission(granted: Boolean){
+    fun getCurrentLocation() {
+        _getCurrentLocation.trySend(Unit)
+    }
+
+    fun updateCameraPermission(granted: Boolean) {
         cameraPermissionGranted.update { granted }
     }
 
-    fun logout(){
+    fun updateLocationPermission(granted: Boolean) {
+        locationPermissionGranted.update { granted }
+    }
+
+    fun updateLocation(location: Location?) {
+        currentLocation.update { location }
+    }
+
+    fun logout() {
         viewModelScope.launch {
             try {
                 AuthManager.signOut()

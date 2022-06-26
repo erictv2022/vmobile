@@ -20,12 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.cueric.fishes.core.compose.ComposeFileProvider
 import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: UserProfileViewModel) {
@@ -34,7 +35,6 @@ fun ProfileScreen(navController: NavController, viewModel: UserProfileViewModel)
     val error by viewModel.error.collectAsState(initial = null)
     val showAlertDialog by viewModel.showAlertDialog.collectAsState()
     val context = LocalContext.current
-    val cameraPermission by viewModel.cameraPermissionGranted.collectAsState()
 
     //region camera
     var hasImage by remember {
@@ -139,11 +139,45 @@ fun ProfileScreen(navController: NavController, viewModel: UserProfileViewModel)
                         readOnly = !isEditing
                     )
 
+                    AddressSection(viewModel = viewModel)
+
                     TextButton(onClick = { viewModel.logout() }) {
                         Text("Sign Out")
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AddressSection(viewModel: UserProfileViewModel) {
+    val address1 by viewModel.addressLine1.collectAsState()
+    val address2 by viewModel.addressLine2.collectAsState()
+    val isEditing by viewModel.isEditing.collectAsState()
+
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(text = "Default Delivery Address", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+        OutlinedTextField(
+            value = address1,
+            onValueChange = { viewModel.updateDisplayName(it) },
+            label = { Text("Address Line 1") },
+            readOnly = !isEditing,
+            placeholder = { Text(text = "Address Line 1") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = address2,
+            onValueChange = { viewModel.updateDisplayName(it) },
+            label = { Text("Address Line 2") },
+            readOnly = !isEditing,
+            placeholder = { Text(text = "Address Line 2") },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+
+    Button(onClick = { viewModel.getCurrentLocation() }) {
+        Text("Get Current Location")
     }
 }
