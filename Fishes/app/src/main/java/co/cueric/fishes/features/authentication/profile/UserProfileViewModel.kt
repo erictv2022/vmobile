@@ -36,6 +36,9 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
         isEditing.update { true }
     }
 
+    fun cancelEdit(){
+        isEditing.update { false }
+    }
     fun updateDisplayName(name: String){
         val userReq = userProfileChangeRequest {
             this.displayName = "${name}"

@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
@@ -27,6 +28,9 @@ fun ProfileScreen(navController: NavController, viewModel: UserProfileViewModel)
                 actions = {
                     when (isEditing) {
                         true -> {
+                            IconButton(onClick = { viewModel.cancelEdit() }) {
+                                Icon(imageVector = Icons.Filled.Cancel, contentDescription = "cancel")
+                            }
                             IconButton(onClick = { viewModel.saveUserProfile() }) {
                                 Icon(imageVector = Icons.Filled.Done, contentDescription = "done")
                             }
