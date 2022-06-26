@@ -1,12 +1,13 @@
 package co.cueric.fishes.features.authentication.profile
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import co.cueric.fishes.core.BaseViewModel
 import co.cueric.fishes.core.STATEFLOW_STARTED
+import co.cueric.fishes.core.errors.DataError
+import co.cueric.fishes.core.errors.ERRORCODE
 import co.cueric.fishes.managers.AuthManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -14,8 +15,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel(application: Application) :BaseViewModel(application) {
-    private val auth = FirebaseAuth.getInstance()
-    private var firebaseUser: FirebaseUser? = auth.currentUser
+    companion object {
+        private val TAG = UserProfileViewModel.javaClass.simpleName
+    }
+
+    private val authManager = AuthManager
 
     private val _displayName = MutableStateFlow("")
     val displayName = _displayName.stateIn(
@@ -27,7 +31,7 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
     val isEditing = MutableStateFlow(false)
 
     init {
-        auth.currentUser?.let { currentUser ->
+        authManager.auth.currentUser?.let { currentUser ->
             _displayName.update { currentUser.displayName.orEmpty() }
         }
     }
@@ -39,14 +43,33 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
     fun cancelEdit(){
         isEditing.update { false }
     }
+
     fun updateDisplayName(name: String){
-        val userReq = userProfileChangeRequest {
-            this.displayName = "${name}"
-        }
+        _displayName.update { name }
     }
 
-    fun saveUserProfile(){
-        isEditing.update { false }
+    fun saveUserProfile() {
+        showLoading()
+        val userReq = userProfileChangeRequest {
+            this.displayName = this@UserProfileViewModel.displayName.value
+        }
+
+        authManager.auth.currentUser?.updateProfile(userReq)?.addOnCompleteListener { task ->
+            try {
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User profile updated.")
+                    isEditing.update { false }
+                }
+                else {
+                    showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = "update fail"))
+                }
+            } catch (e: Exception) {
+                    showError(DataError(errorCode = ERRORCODE.FAIL.ordinal, message = e.localizedMessage))
+            }
+            finally {
+                dismissLoading()
+            }
+        }
     }
 
     fun logout(){

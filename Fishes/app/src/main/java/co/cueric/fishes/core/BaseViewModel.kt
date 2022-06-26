@@ -28,4 +28,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     fun dismissLoading(){
         _isLoading.update { false }
     }
+
+    fun showError(error: BaseError){
+        _error.trySend(error)
+    }
 }
