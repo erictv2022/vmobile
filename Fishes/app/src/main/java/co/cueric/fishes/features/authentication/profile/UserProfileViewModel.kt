@@ -1,7 +1,11 @@
 package co.cueric.fishes.features.authentication.profile
 
 import android.app.Application
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.provider.MediaStore
 import android.util.Log
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.viewModelScope
 import co.cueric.fishes.core.BaseViewModel
 import co.cueric.fishes.core.STATEFLOW_STARTED
@@ -10,7 +14,9 @@ import co.cueric.fishes.core.errors.DataError
 import co.cueric.fishes.core.errors.ERRORCODE
 import co.cueric.fishes.managers.AuthManager
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,6 +36,10 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
     )
 
     val isEditing = MutableStateFlow(false)
+
+    val _takePhoto = Channel<Unit>(Channel.BUFFERED)
+    val takePhoto = _takePhoto.receiveAsFlow()
+    val cameraPermissionGranted = MutableStateFlow(false)
 
     init {
         authManager.auth.currentUser?.let { currentUser ->
@@ -71,6 +81,14 @@ class UserProfileViewModel(application: Application) :BaseViewModel(application)
                 dismissLoading()
             }
         }
+    }
+
+    fun takePhoto() {
+        _takePhoto.trySend(Unit)
+    }
+
+    fun updateCameraPermission(granted: Boolean){
+        cameraPermissionGranted.update { granted }
     }
 
     fun logout(){

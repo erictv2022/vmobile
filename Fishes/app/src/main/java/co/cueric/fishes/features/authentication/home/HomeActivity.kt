@@ -1,11 +1,13 @@
 package co.cueric.fishes.features.authentication.home
 
+import android.Manifest
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -31,6 +33,7 @@ import co.cueric.fishes.features.authentication.notification.NotificationScreen
 import co.cueric.fishes.features.authentication.profile.ProfileScreen
 import co.cueric.fishes.features.authentication.profile.UserProfileViewModel
 import co.cueric.fishes.managers.AuthManager
+import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
@@ -61,6 +64,14 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     //region Biometric
@@ -126,6 +137,30 @@ class HomeActivity : AppCompatActivity() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 AuthManager.didSignout.collectLatest {
                     startRegister(this@HomeActivity)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                userProfileViewModel.takePhoto.collectLatest {
+                    // Request camera permissions
+                    PermissionX.init(this@HomeActivity)
+                        .permissions(
+                            Manifest.permission.CAMERA,
+                        )
+                        .request { allGranted, grantedList, deniedList ->
+                            if (allGranted) {
+                                userProfileViewModel.updateCameraPermission(allGranted)
+                            } else {
+                                userProfileViewModel.updateCameraPermission(false)
+                                Toast.makeText(
+                                    this@HomeActivity,
+                                    "These permissions are denied: $deniedList",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                 }
             }
         }
