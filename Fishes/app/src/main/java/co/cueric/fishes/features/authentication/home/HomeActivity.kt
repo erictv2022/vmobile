@@ -214,7 +214,7 @@ class HomeActivity : AppCompatActivity() {
     var mLocationCallBack: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             mLastLocation = result.lastLocation
-            userProfileViewModel.updateLocation(mLastLocation)
+            userProfileViewModel.updateLocation(mLastLocation, context = this@HomeActivity)
         }
     }
 

@@ -160,18 +160,16 @@ fun AddressSection(viewModel: UserProfileViewModel) {
         Text(text = "Default Delivery Address", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
         OutlinedTextField(
             value = address1,
-            onValueChange = { viewModel.updateDisplayName(it) },
+            onValueChange = { viewModel.updateAddress1(it) },
             label = { Text("Address Line 1") },
-            readOnly = !isEditing,
             placeholder = { Text(text = "Address Line 1") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = address2,
-            onValueChange = { viewModel.updateDisplayName(it) },
+            onValueChange = { viewModel.updateAddress2(it) },
             label = { Text("Address Line 2") },
-            readOnly = !isEditing,
             placeholder = { Text(text = "Address Line 2") },
             modifier = Modifier.fillMaxWidth()
         )
