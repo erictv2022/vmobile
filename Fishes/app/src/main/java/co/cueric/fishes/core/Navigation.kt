@@ -13,6 +13,12 @@ const val NAV_TYPE_NONE = 1
 const val NAV_TYPE_SLIDE_UP = 2
 const val NAV_TYPE_SLIDE_IN = 3
 
+/**
+ * Start activity with animation
+ *
+ * @param fromActivity
+ * @param intNavigationType
+ */
 private fun setStartActivityAnimation(
     fromActivity: Activity,
     intNavigationType: Int
@@ -32,6 +38,14 @@ private fun setStartActivityAnimation(
     }
 }
 
+/**
+ * Handy function for start activity
+ *
+ * @param fromActivity
+ * @param intent
+ * @param navigationType
+ * @param bundle
+ */
 fun startActivity(
     fromActivity: Activity,
     intent: Intent,
@@ -43,11 +57,21 @@ fun startActivity(
     setStartActivityAnimation(fromActivity, navigationType)
 }
 
+/**
+ * Start registration activity
+ *
+ * @param from
+ */
 fun startRegister(from: Activity){
     val intent = Intent(from, AuthenticationActivity::class.java)
     startActivity(from, intent, navigationType = NAV_TYPE_SLIDE_UP)
 }
 
+/**
+ * Start landing view after user sign in
+ *
+ * @param from
+ */
 fun startHome(from: Activity){
     val intent = Intent(from, HomeActivity::class.java)
     startActivity(from, intent, navigationType = NAV_TYPE_SLIDE_UP)

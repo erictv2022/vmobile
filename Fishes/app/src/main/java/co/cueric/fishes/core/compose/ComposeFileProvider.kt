@@ -5,8 +5,17 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
 
+/**
+ * File Provider for media storage
+ */
 class ComposeFileProvider : FileProvider() {
     companion object {
+        /**
+         * Get the image from local storage
+         *
+         * @param context UI context
+         * @return
+         */
         fun getImageUri(context: Context): Uri {
             val directory = File(context.cacheDir, "images")
             directory.mkdirs()
