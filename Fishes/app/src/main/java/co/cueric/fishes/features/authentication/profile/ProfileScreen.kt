@@ -20,7 +20,21 @@ import androidx.navigation.NavController
 fun ProfileScreen(navController: NavController, viewModel: UserProfileViewModel) {
     val displayName by viewModel.displayName.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
+    val error by viewModel.error.collectAsState(initial = null)
+    val showAlertDialog by viewModel.showAlertDialog.collectAsState()
 
+    if (showAlertDialog && error != null){
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissAlertDialog() },
+            confirmButton = {
+                TextButton(onClick = { viewModel.dismissAlertDialog()})
+                { Text(text = "OK") }
+            },
+            title = { Text(text = "Error")},
+            text = { Text(text = error?.message.orEmpty())}
+        )
+    }
+    
     Scaffold(
         topBar = {
             TopAppBar(
