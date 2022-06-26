@@ -144,13 +144,13 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 userProfileViewModel.getCurrentLocation.collectLatest {
-                    // Request camera permissions
+                    // Request location permissions
                     PermissionX.init(this@HomeActivity)
                         .permissions(
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.ACCESS_FINE_LOCATION
                         )
-                        .request { allGranted, grantedList, deniedList ->
+                        .request { _, grantedList, deniedList ->
                             if (!grantedList.isNullOrEmpty()) {
                                 userProfileViewModel.updateLocationPermission(true)
                             } else {
