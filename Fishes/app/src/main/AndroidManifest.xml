@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.cueric.fishes">
+
     <uses-permission android:name="android.permission.CAMERA" />
-    
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:requiredFeature="false" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +18,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Fishes">
+
+        <provider
+            android:name="co.cueric.fishes.core.compose.ComposeFileProvider"
+            android:authorities="co.cueric.fishes.core.compose.ComposeFileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
         <activity
             android:name=".features.authentication.user.UserProfileActivity"
             android:exported="false"
