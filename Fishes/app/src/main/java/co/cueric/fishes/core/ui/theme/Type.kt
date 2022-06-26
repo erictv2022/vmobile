@@ -26,3 +26,8 @@ val Typography = Typography(
     )
     */
 )
+
+val AppTypography = Typography()
+
+val Typography.ProductTitle:TextStyle
+    get() = TextStyle(fontSize = 24.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)

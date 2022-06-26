@@ -1,3 +1,8 @@
 package co.cueric.fishes.core.errors
 
-data class BaseError(val errorCode: Int, val message: String?)
+enum class ERRORCODE {
+    FAIL,
+    OK
+}
+
+open class BaseError(open val errorCode: Int, open val message: String?)
