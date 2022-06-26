@@ -1,8 +1,10 @@
 package co.cueric.fishes.features.authentication.home
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import co.cueric.fishes.config.fastforexAPIKEY
 import co.cueric.fishes.core.BaseViewModel
 import co.cueric.fishes.core.errors.BaseError
 import co.cueric.fishes.core.parseToFloat
@@ -11,6 +13,10 @@ import co.cueric.fishes.managers.AuthManager
 import co.cueric.fishes.managers.DatabaseManager
 import co.cueric.fishes.models.Fish
 import co.cueric.fishes.models.Product
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -32,6 +38,8 @@ class HomeViewModel(application: Application) :BaseViewModel(application) {
     val products = MutableStateFlow<List<Product>>(
         emptyList<Product>()
     )
+
+    val exchageRate = MutableStateFlow<Float?>(null)
 
     init {
         viewModelScope.launch {
@@ -85,5 +93,29 @@ class HomeViewModel(application: Application) :BaseViewModel(application) {
                 showError(BaseError(errorCode = error.code, message = error.message))
             }
         })
+    }
+
+    fun fetchExchangeRate(from: String = "HKD", to:String = "GBP", context: Context) {
+        val url = "https://api.fastforex.io/convert?from=${from}&to=${to}&amount=100&api_key=${fastforexAPIKEY}"
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
+                val exchangeRate = parseToFloat(response.getJSONObject("result")["rate"])
+                this.exchageRate.update { exchangeRate }
+                "Response: %s".format(response.toString())
+            },
+            Response.ErrorListener { error ->
+                showError(
+                    BaseError(
+                        errorCode = error.networkResponse.statusCode,
+                        message = error.localizedMessage
+                    )
+                )
+            }
+        )
+
+        // Add the request to the RequestQueue.
+        val queue = Volley.newRequestQueue(context)
+        queue.add(jsonObjectRequest)
     }
 }

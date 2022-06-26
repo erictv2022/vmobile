@@ -110,6 +110,7 @@ class HomeActivity : AppCompatActivity() {
                 ) {
                     super.onAuthenticationSucceeded(result)
                     viewModel.biometricSuccess()
+                    viewModel.fetchExchangeRate(from = "HKD", to = "GBP", context = this@HomeActivity)
 //                    Toast.makeText(
 //                        applicationContext,
 //                        "Authentication succeeded!",
