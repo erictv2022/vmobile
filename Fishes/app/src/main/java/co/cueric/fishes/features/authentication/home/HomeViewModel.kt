@@ -96,26 +96,34 @@ class HomeViewModel(application: Application) :BaseViewModel(application) {
     }
 
     fun fetchExchangeRate(from: String = "HKD", to:String = "GBP", context: Context) {
-        val url = "https://api.fastforex.io/convert?from=${from}&to=${to}&amount=100&api_key=${fastforexAPIKEY}"
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            Response.Listener { response ->
-                val exchangeRate = parseToFloat(response.getJSONObject("result")["rate"])
-                this.exchageRate.update { exchangeRate }
-                "Response: %s".format(response.toString())
-            },
-            Response.ErrorListener { error ->
-                showError(
-                    BaseError(
-                        errorCode = error.networkResponse.statusCode,
-                        message = error.localizedMessage
-                    )
-                )
-            }
-        )
+        try {
+            val url = "https://api.fastforex.io/convert?from=${from}&to=${to}&amount=100&api_key=${fastforexAPIKEY}"
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.GET, url, null,
+                { response ->
+                    val exchangeRate = parseToFloat(response.getJSONObject("result")["rate"])
+                    this.exchageRate.update { exchangeRate }
+                    "Response: %s".format(response.toString())
+                },
+                { error ->
+                    try {
+                        showError(
+                            BaseError(
+                                errorCode = error.networkResponse.statusCode,
+                                message = error.localizedMessage
+                            )
+                        )
+                    } catch (e: Exception) {
+                        showError(BaseError(errorCode = -1, message = e.localizedMessage))
+                    }
+                }
+            )
 
-        // Add the request to the RequestQueue.
-        val queue = Volley.newRequestQueue(context)
-        queue.add(jsonObjectRequest)
+            // Add the request to the RequestQueue.
+            val queue = Volley.newRequestQueue(context)
+            queue.add(jsonObjectRequest)
+        } catch (e: Exception) {
+            showError(BaseError(errorCode = -1, message = e.localizedMessage))
+        }
     }
 }
