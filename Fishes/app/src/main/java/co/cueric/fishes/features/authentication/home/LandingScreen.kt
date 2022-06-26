@@ -20,6 +20,7 @@ import co.cueric.fishes.core.ui.theme.ProductTitle
 @Composable
 fun LandingScreen(navController: NavController, viewModel: HomeViewModel) {
     val products by viewModel.products.collectAsState()
+    val exchageRate by viewModel.exchageRate.collectAsState()
 
     LazyColumn(
         state = rememberLazyListState(),
@@ -41,6 +42,14 @@ fun LandingScreen(navController: NavController, viewModel: HomeViewModel) {
                                 text = currencyText("HKD", product.price),
                                 fontWeight = FontWeight.SemiBold
                             )
+
+                            exchageRate?.run {
+                                Text(
+                                    text = currencyText("GBP", product.price * this),
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
                         }
                     }
                 }
